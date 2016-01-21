@@ -11,18 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160120221510) do
+ActiveRecord::Schema.define(version: 20160120232614) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "shortened_urls", force: :cascade do |t|
     t.string  "long_url"
-    t.string  "shortened_url"
-    t.integer "user_id"
+    t.string  "short_url"
+    t.integer "submitter_id"
   end
 
-  add_index "shortened_urls", ["user_id"], name: "index_shortened_urls_on_user_id", using: :btree
+  add_index "shortened_urls", ["short_url"], name: "index_shortened_urls_on_short_url", using: :btree
+  add_index "shortened_urls", ["submitter_id"], name: "index_shortened_urls_on_submitter_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email",      null: false
@@ -31,5 +32,12 @@ ActiveRecord::Schema.define(version: 20160120221510) do
   end
 
   add_index "users", ["email"], name: "index_users_on_email", using: :btree
+
+  create_table "visits", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "shortened_url_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end
