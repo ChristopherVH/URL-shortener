@@ -1,0 +1,39 @@
+user = nil
+until user
+  print "Input your email:\n> "
+  email = gets.chomp
+  user = User.find_by(email: email)
+  unless user
+    puts "User not found!"
+  end
+end
+
+request = ""
+until request == "0" || request == "1"
+  print "\nWhat do you want to do?\n0.  Create shortened URL\n1.  Visit shortened URL\n> "
+  request = gets.chomp
+  unless request == "0" || request == "1"
+    print "\nInvalid input.\n"
+  end
+end
+if request == '0'
+  print "Type in your long url\n> "
+  long_url = gets.chomp
+  short_url = ShortenedUrl.find_by(long_url: long_url)
+  unless short_url
+    short_url = ShortenedUrl.create_for_user_and_long_url!(user, long_url)
+  end
+  print "Short url is: #{short_url.short_url}\n"
+else
+  print "Type in the shortened url\n> "
+  short_url = gets.chomp
+  shortened_url = ShortenedUrl.find_by(short_url: short_url)
+  unless shortened_url
+    print "Short Url not found!\n"
+  else
+    Visit.record_visit(user, shortened_url)
+    print "Launching #{shortened_url.long_url}\n"
+    Launchy.open(shortened_url.long_url)
+  end
+end
+puts "Goodbye!"
